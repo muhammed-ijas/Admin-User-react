@@ -3,6 +3,7 @@ import dotenv from 'dotenv'
 dotenv.config()
 const port = process.env.PORT;
 import userRoutes from './routes/userRoutes.js'
+import adminRoutes from './routes/adminRoutes.js'
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 import connectDB from './config/db.js';
 import cookieParser from 'cookie-parser';
@@ -22,6 +23,7 @@ app.use("/images", express.static(path.resolve(__dirname, "assets/images")));
 
 
 app.use('/api/users', userRoutes)
+app.use('/api/admins', adminRoutes)
 
 app.get('/', (req, res) => {
     res.send('hello world')

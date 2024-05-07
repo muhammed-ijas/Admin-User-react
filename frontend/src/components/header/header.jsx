@@ -1,4 +1,3 @@
-import React, { useDebugValue, useEffect } from 'react'
 import { ModeToggle } from '../mode-toggle'
 import { Button } from '../ui/button';
 import { Link, useNavigate } from 'react-router-dom';
@@ -14,16 +13,14 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { User } from 'lucide-react';
+const imagePath = "http://localhost:8000/images"
 
 
 function Header() {
-
     const { userInfo } = useSelector((state) => state.auth);
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const [logoutApiCall] = useLogoutMutation();
-
 
     const logoutHandler = async () => {
         try {
@@ -39,13 +36,13 @@ function Header() {
         <div className='relative w-full h-[10%] p-5 border'>
             <div className='flex justify-between'>
                 <Link to={'/'}><h2 className='text-xl sm:text-2xl md:text-4xl font-bold'>Mern Auth</h2></Link>
-                <div className='flex items-center gap-5'>
+                <div className='flex items-center gap-4'>
                     {
                         userInfo ?
 
                             <div className='flex gap-2'>
                                 <Avatar>
-                                    <AvatarImage src={userInfo.image} />
+                                    <AvatarImage src={`${imagePath}/${userInfo.image}`} />
                                     <AvatarFallback>CN</AvatarFallback>
                                 </Avatar>
                                 <DropdownMenu sideOffset={2}>
@@ -58,8 +55,9 @@ function Header() {
                             </div>
                             : <><Link to={'/login'}> <Button variant='outline'><span className='capitalize text-sm mr-2'>signIn</span> </Button></Link>
                                 <Link to={'/register'} ><Button variant='outline'><span className='capitalize text-sm mr-2'>signUp</span> </Button></Link>
-                                <ModeToggle /></>
+                            </>
                     }
+                    <ModeToggle />
                 </div>
             </div>
         </div >

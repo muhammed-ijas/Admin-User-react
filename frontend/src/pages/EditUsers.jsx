@@ -9,11 +9,13 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useDispatch, useSelector } from 'react-redux';
 import { setCredentials } from '../slices/authSlice';
-import { useUpdateUserMutation } from '../slices/userApiSlice';
 import { toast } from 'sonner';
+import { useAdminEditUserMutation, useGetOneUserMutation } from '../slices/adminApiSlice';
+import { useParams } from 'react-router-dom';
 
 
-function Profile() {
+function EditUsers() {
+
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -21,17 +23,20 @@ function Profile() {
     const [image, setImage] = useState(null)
     const [currentImage, setCurrentImage] = useState("");
     const imagePath = "http://localhost:8000/images"
-
     const dispatch = useDispatch();
-
-    const { userInfo } = useSelector((state) => state.auth);
-    const [updateUser] = useUpdateUserMutation()
+    const { userId } = useParams();
+    const [getOneUser] = useGetOneUserMutation()
+    const [adminEditUser] = useAdminEditUserMutation()
 
     useEffect(() => {
-        setName(userInfo.name);
-        setEmail(userInfo.email);
-        setImage(userInfo.image)
-    }, [userInfo]);
+        async function getUserInfo() {
+            const res = await getOneUser(userId)
+            setName(res.data?.name)
+            setEmail(res.data?.email)
+            setImage(res.data?.image)
+        }
+        getUserInfo()
+    }, [])
 
 
     const handleSubmit = async (e) => {
@@ -40,8 +45,8 @@ function Profile() {
             toast.error('Passwords do not match', { style: { color: 'red' } });
         } else {
             try {
-                const res = await updateUser({
-                    _id: userInfo._id,
+                const res = await adminEditUser({
+                    _id: userId,
                     name,
                     email,
                     password,
@@ -55,6 +60,7 @@ function Profile() {
         }
     };
 
+
     return (
         <div className='flex mt-10 justify-center '>
             <Card className="">
@@ -65,7 +71,7 @@ function Profile() {
                             <AvatarFallback>CN</AvatarFallback>
                         </Avatar>
                     </div>
-                    <CardTitle className={'capitalize'} >Update profile </CardTitle>
+                    <CardTitle className={'capitalize'} >Update User profile </CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="grid w-full items-center gap-4">
@@ -103,7 +109,7 @@ function Profile() {
                                 <div className="mb-4">
 
                                 </div>
-                                <div className="mb-4 flex gap-3">
+                                {/* <div className="mb-4 flex gap-3">
                                     <div>
                                         <label htmlFor="password" className="block font-bold mb-2">
                                             Password
@@ -130,7 +136,7 @@ function Profile() {
 
                                         />
                                     </div>
-                                </div>
+                                </div> */}
                                 <div className='mb-4 '>
                                     <label htmlFor="confirmPassword" className="block font-bold mb-2 capitalize">
                                         upload image
@@ -154,4 +160,4 @@ function Profile() {
     )
 }
 
-export default Profile
+export default EditUsers

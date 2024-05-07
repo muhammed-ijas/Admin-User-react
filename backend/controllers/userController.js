@@ -5,23 +5,30 @@ import generateToken from "../utils/generateToken.js";
 const authUser = expressAsyncHandler(async (req, res) => {
     const { email, password } = req.body
     const user = await User.findOne({ email });
+    if (!user) {
+        throw new Error('user do not exist');
+
+    }
     if (user && (await user.matchPassword(password))) {
         generateToken(res, user._id)
         res.status(201).json({
             _id: user._id,
             name: user.name,
             email: user.email,
+            image : user.image
         });
 
     } else {
         res.status(400)
-        throw new Error('invalid email or password');
+        throw new Error('incorrect password try again !');
     }
 });
 
 
 
 const registerUser = expressAsyncHandler(async (req, res) => {
+
+
     const { name, email, password } = req.body;
     const image = req.file.filename
     const isUserExist = await User.findOne({ email });
@@ -54,9 +61,6 @@ const registerUser = expressAsyncHandler(async (req, res) => {
 });
 
 
-
-
-
 const logoutUser = (req, res) => {
     res.cookie('jwt', '', {
         httpOnly: true,
@@ -67,37 +71,34 @@ const logoutUser = (req, res) => {
 
 
 const getUserProfile = expressAsyncHandler(async (req, res) => {
-    const { _id, name, email } = await User.findById(req.user._id);
-    if (user) {
-        res.json({
-            _id,
-            name,
-            email,
-        });
-    } else {
-        res.status(404);
-        throw new Error('user not found');
-    }
+    const { _id, name, email, image } = await User.findById(req.user._id);
+    res.json({
+        _id,
+        name,
+        email,
+        image
+    });
+    res.status(404);
+    throw new Error('user not found');
 })
 
 
+
 const updateUserProfile = expressAsyncHandler(async (req, res) => {
-
     const user = await User.findById(req.user._id);
-
     if (user) {
         user.name = req.body.name || user.name;
         user.email = req.body.email || user.email;
-
+        user.image = req.file?.filename || user.image;
         if (req.body.password) {
             user.password = req.body.password;
         }
         const updatedUser = await user.save()
-
         res.json({
             _id: updatedUser._id,
             name: updatedUser.name,
             email: updatedUser.email,
+            image: updatedUser.image
         });
 
     } else {
@@ -105,7 +106,6 @@ const updateUserProfile = expressAsyncHandler(async (req, res) => {
         throw new Error('user not found')
     }
 });
-
 
 export {
     authUser,

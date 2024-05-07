@@ -5,10 +5,12 @@ import { protect } from '../middleware/authMiddleware.js';
 import imageUpload from '../middleware/multerMiddleware.js';
 
 
-router.post('/', imageUpload,registerUser);
+router.post('/', imageUpload, registerUser);
 router.post('/auth', authUser);
 router.post('/logout', logoutUser);
-router.get('/profile', protect, getUserProfile);
-router.put('/updateProfile', updateUserProfile)
+router
+    .route('/profile')
+    .get(protect, getUserProfile)
+    .put(protect, imageUpload, updateUserProfile);
 
 export default router
