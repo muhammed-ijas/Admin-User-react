@@ -61,6 +61,7 @@ const registerUser = expressAsyncHandler(async (req, res) => {
 });
 
 
+
 const logoutUser = (req, res) => {
     res.cookie('jwt', '', {
         httpOnly: true,

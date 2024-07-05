@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'sonner';
 import { useRegisterMutation } from '../slices/userApiSlice';
-import { setCredentials } from '../slices/authSlice';
+import {  setCredentials } from '../slices/authSlice';
 
 
 
@@ -27,7 +27,7 @@ const RegisterPage = () => {
         }
     }, [navigate, userInfo])
 
-
+ 
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -59,6 +59,8 @@ const RegisterPage = () => {
 
     return (
         <div className="flex justify-center items-center h-[503px]">
+                
+           
             <div className="border md:w-[400px] p-8 rounded-lg shadow-md">
                 <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
                 <form onSubmit={handleSubmit} >
